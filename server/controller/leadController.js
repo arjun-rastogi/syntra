@@ -43,3 +43,27 @@ exports.Status = async (req, res, next) => {
     res.status(500).json({ message: "Unable to update the data." });
   }
 };
+
+exports.AddLeads = async (req, res, next) => {
+  try {
+    const { name, email } = req.body; // Assuming you're extracting the values from the request body
+
+    let query =
+      "INSERT INTO Leads (name, email, status, created) VALUES (?, ?, ?, ?)";
+    connection.query(
+      query,
+      [name, email, "New", new Date()],
+      (err, results) => {
+        if (err) {
+          console.error(err);
+          res.status(500).json({ message: "Unable to create lead." });
+        } else {
+          res.status(200).json({ message: "Lead created." });
+        }
+      }
+    );
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Unable to create lead." });
+  }
+};

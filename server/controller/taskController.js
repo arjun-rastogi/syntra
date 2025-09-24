@@ -47,3 +47,27 @@ exports.Status = async (req, res, next) => {
     res.status(500).json({ message: "Unable to update the data." });
   }
 };
+
+exports.AddTask = async (req, res, next) => {
+  try {
+    const { name, assigned_id, assigned_to, status } = req.body; // Assuming you're extracting the values from the request body
+
+    let query =
+      "INSERT INTO Tasks (name, assigned_id, assigned_to, status, created) VALUES (?, ?, ?, ?, ?)";
+    connection.query(
+      query,
+      [name, null, null, "New", new Date()],
+      (err, results) => {
+        if (err) {
+          console.error(err);
+          res.status(500).json({ message: "Unable to create task." });
+        } else {
+          res.status(200).json({ message: "Task created." });
+        }
+      }
+    );
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Unable to create task." });
+  }
+};

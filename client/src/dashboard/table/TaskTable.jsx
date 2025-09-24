@@ -3,10 +3,13 @@ import { IoIosCloseCircleOutline } from "react-icons/io";
 import axios from "axios";
 
 const TaskTable = () => {
+  const [name, setName] = useState("");
+
   const [tasks, setTasks] = useState([]);
   const [TeamData, setTeamData] = useState([]);
   const [selectedtask, setSelectedtask] = useState(null);
   const [search, setSearch] = useState("");
+  const [addNewLeadPopup, setAddNewLeadPopup] = useState(null);
 
   const getTeamData = async () => {
     try {
@@ -62,6 +65,20 @@ const TaskTable = () => {
     return task?.name?.toLowerCase()?.includes(search?.toLowerCase());
   });
 
+  const handleAddNewTask = async () => {
+    try {
+      const response = await axios.post("http://localhost:5000/api/tasks", {
+        name,
+      });
+      window.alert(response.data.message);
+      setName("");
+      setAddNewLeadPopup(false);
+      getTaskData();
+    } catch (err) {
+      console.error("Add Task failed");
+    }
+  };
+
   useEffect(() => {
     getTeamData();
     getTaskData();
@@ -70,6 +87,12 @@ const TaskTable = () => {
   return (
     <div className="p-4">
       <h2 className="text-lg font-bold mb-4">Task List</h2>
+      <button
+        onClick={() => setAddNewLeadPopup(true)}
+        className="px-2 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700"
+      >
+        Add New
+      </button>
 
       <div className="overflow-x-auto">
         {/* Search Box */}
@@ -150,6 +173,46 @@ const TaskTable = () => {
                 </option>
               ))}
             </select>
+          </div>
+        </div>
+      )}
+
+      {addNewLeadPopup && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-80">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold">Add New Lead</h3>
+
+              <button
+                onClick={() => {
+                  setName("");
+                  setAddNewLeadPopup(false);
+                }}
+                className="bg-white text-black px-0 py-1 rounded  text-lg"
+              >
+                <IoIosCloseCircleOutline />
+              </button>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Name
+              </label>
+              <input
+                type="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Enter your Name"
+                className="mt-1 w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+            </div>
+            <button
+              onClick={handleAddNewTask}
+              type="button"
+              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50 mt-2"
+            >
+              Create New
+            </button>
           </div>
         </div>
       )}
