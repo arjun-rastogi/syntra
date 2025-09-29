@@ -12,8 +12,10 @@ const TeamList = () => {
           <p className="text-gray-600">Manage your team's data</p>
         </div>
       </div>
-      <div className="overflow-x-auto">
-        <TeamTable />
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div className="overflow-x-auto">
+          <TeamTable />
+        </div>
       </div>
     </div>
   );
