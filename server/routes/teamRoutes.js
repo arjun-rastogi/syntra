@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const { Teams } = require("../controller/teamController");
+const { Teams, AddTeam, UpdateTeam } = require("../controller/teamController");
 
-// Stats API
 router.get("/", Teams);
+router.post("/", AddTeam);
+router.patch("/:id", UpdateTeam);
 
 module.exports = router;

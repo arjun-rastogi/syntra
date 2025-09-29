@@ -86,59 +86,73 @@ const TaskTable = () => {
 
   return (
     <div className="p-4">
-      <h2 className="text-lg font-bold mb-4">Task List</h2>
-      <button
-        onClick={() => setAddNewLeadPopup(true)}
-        className="px-2 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700"
-      >
-        Add New
-      </button>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl font-bold">Task List</h2>
+        <button
+          onClick={() => setAddNewLeadPopup(true)}
+          className="px-3 py-1.5 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm"
+        >
+          Add New Task
+        </button>
+      </div>
 
       <div className="overflow-x-auto">
-        {/* Search Box */}
-        <input
-          type="search"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search by task name"
-          className="border rounded px-3 py-2 text-sm w-full md:w-64"
-          required
-        />
+        <div className="mb-4">
+          <input
+            type="search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search by task name"
+            className="border rounded px-3 py-2 text-sm w-full md:w-80 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
 
-        <table className="min-w-full bg-white border rounded shadow text-sm">
-          <thead>
-            <tr className="bg-gray-100 text-left font-semibold">
-              <th className="p-3 border">Name</th>
-              <th className="p-3 border">Assigned To</th>
-              <th className="p-3 border">Status</th>
-              <th className="p-3 border">Created</th>
-              <th className="p-3 border">Actions</th>
+        <table className="min-w-full bg-white border rounded-lg overflow-hidden shadow">
+          <thead className="bg-gray-50">
+            <tr className="text-left text-gray-600 text-sm font-medium">
+              <th className="p-4 border-b">Task Name</th>
+              <th className="p-4 border-b">Assigned To</th>
+              <th className="p-4 border-b">Status</th>
+              <th className="p-4 border-b">Created</th>
+              <th className="p-4 border-b">Actions</th>
             </tr>
           </thead>
           <tbody>
             {filteredData?.length > 0 ? (
               filteredData.map((task) => (
-                <tr key={task.id} className="hover:bg-gray-50">
-                  <td className="p-3 border">{task.name}</td>
-                  <td className="p-3 border">{task.assigned_to}</td>
-                  <td className="p-3 border">{task.status}</td>
-                  <td className="p-3 border">
+                <tr key={task.id} className="hover:bg-gray-50 border-b">
+                  <td className="p-4">{task.name}</td>
+                  <td className="p-4">{task.assigned_to || "Unassigned"}</td>
+                  <td className="p-4">
+                    <span
+                      className={`px-2 py-1 text-xs rounded-full ${
+                        task.status === "Completed"
+                          ? "bg-green-100 text-green-800"
+                          : task.status === "In Progress"
+                          ? "bg-blue-100 text-blue-800"
+                          : "bg-yellow-100 text-yellow-800"
+                      }`}
+                    >
+                      {task.status}
+                    </span>
+                  </td>
+                  <td className="p-4">
                     {new Date(task.created).toLocaleDateString()}
                   </td>
-                  <td className="p-3 border">
+                  <td className="p-4">
                     <button
                       onClick={() => setSelectedtask(task)}
-                      className="px-2 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700"
+                      className="px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
                     >
-                      Update
+                      Assign
                     </button>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan={5} className="p-3 text-center">
-                  No tasks found
+                <td colSpan={5} className="p-6 text-center text-gray-500">
+                  No tasks found. Create a new task to get started.
                 </td>
               </tr>
             )}
@@ -162,17 +176,28 @@ const TaskTable = () => {
               Task: <span className="font-semibold">{selectedtask.name}</span>
             </p>
             <select
-              value={selectedtask.assigned_id}
-              onChange={(e) => handleStatusChange(e.target.value)}
-              className="w-full p-2 border rounded"
+              value={selectedtask.assigned_id || ""}
+              onChange={(e) =>
+                setSelectedtask({
+                  ...selectedtask,
+                  assigned_id: e.target.value,
+                })
+              }
+              className="w-full p-2 border rounded mb-4"
             >
-              <option value="">Select</option>
+              <option value="">Select Team Member</option>
               {TeamData?.map((team) => (
                 <option key={team.id} value={team.id}>
                   {team.name}
                 </option>
               ))}
             </select>
+            <button
+              onClick={() => handleStatusChange(selectedtask.assigned_id)}
+              className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+            >
+              Assign Task
+            </button>
           </div>
         </div>
       )}
